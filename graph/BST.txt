@@ -1,0 +1,254 @@
+#include<bits/stdc++.h>
+using namespace std;
+struct Node{
+	int key;
+	Node* left;
+	Node* right;
+	Node* parent;
+	Node(int key):key(key),left(NULL),right(NULL),parent(NULL){}
+};
+class Tree{
+public:
+	Node* root;
+	Tree()
+	{
+		this->root=NULL;
+	}
+	bool empty()
+	{
+		if(this->root==NULL)
+			return true;
+		else
+			return false;
+	}
+	Node* search(int key)
+	{
+		Node* curr=this->root;
+		while(curr!=NULL)
+		{
+			if(curr->key == key)
+				return curr;
+			else if(key < curr->key)
+				curr=curr->left;
+			else
+				curr=curr->right;
+		}
+		return NULL;
+	}
+	void insert(int key)
+	{
+		Node* i=new Node(key);
+		if(this->root==NULL)
+		{
+			this->root=i;
+			return;
+		}
+		Node* p=NULL;
+		Node* c=this->root;
+		while(c!=NULL)
+		{
+			p=c;
+			if(key < c->key)
+				c=c->left;
+			else
+				c=c->right;
+		}
+		i->parent = p;
+		if(key < p->key)
+			p->left=i;
+		else
+			p->right=i;
+	}
+	Node* maximum(Node* x=NULL)
+	{
+		Node* c=NULL;
+		if(x==NULL)
+			c=this->root;
+		else
+			c=x;
+		while(c->right!=NULL)
+		{
+			c=c->right;
+		}
+		return c;
+	}
+	Node* minimum(Node* x=NULL)
+	{
+		Node* c=NULL;
+		if(x==NULL)
+			c=this->root;
+		else
+			c=x;
+		while(c->left!=NULL)
+		{
+			c=c->left;
+		}
+		return c;
+	}
+	Node* successor(int val)
+	{
+		Node* x=search(val);
+		if(x==NULL)
+			return NULL;
+		if(x->right)
+			return minimum(x->right);
+		else
+		{
+			Node* p=x->parent;
+			Node* c=x;
+			while(p!=NULL&&p->right==c)
+			{
+				c=p;
+				p=p->parent;
+			}
+			return p;
+		}
+	}
+	Node* predecessor(int val)
+	{
+		Node* x=search(val);
+		if(x==NULL)
+			return NULL;
+		if(x->left)
+			return minimum(x->left);
+		else
+		{
+			Node* p=x->parent;
+			Node* c=x;
+			while(p!=NULL&&p->left==c)
+			{
+				c=p;
+				p=p->parent;
+			}
+			return p;
+		}
+	}
+	void del(Node* x)
+	{
+		//Node* x=search(key);
+		Node* p=NULL;
+		if(x==NULL)
+			return;
+		if(x->left==NULL && x->right==NULL)
+		{
+			p=x->parent;
+			if(p && p->right==x)
+				p->right=NULL;
+			else if(p && p->left==x)
+				p->left=NULL;
+			else
+				this->root = NULL;
+			free(x);
+		}
+		else if(x->left==NULL)
+		{
+			p=x->parent;
+			if(p && p->right==x)
+			{
+				p->right = x->right;
+				x->right->parent = p;
+			}
+			else if(p && p->left==x)
+			{
+				p->left = x->right;
+				x->right->parent = p;
+			}
+			else
+			{
+				x->right->parent = NULL;
+				this->root = x->right;
+			}
+			free(x);
+		}
+		else if(x->right==NULL)
+		{
+			p=x->parent;
+			if(p && p->right==x)
+			{
+				p->right = x->left;
+				x->left->parent = p;
+			}
+			else if(p && p->left==x)
+			{
+				p->left = x->left;
+				x->left->parent = p;
+			}
+			else
+			{
+				x->left->parent = NULL;
+				this->root = x->left;
+			}
+			free(x);
+		}
+		else
+		{
+			Node* y=successor(x->key);
+			int t=y->key;
+			y->key=x->key;
+			x->key=t;
+			del(y);
+		}
+	}
+	void inorderRec(Node* x)
+	{
+		if(x==NULL)
+			return;
+		inorderRec(x->left);
+		cout<<x->key<<' ';
+		inorderRec(x->right);
+	}
+	void inorder()
+	{
+		inorderRec(this->root);
+		cout<<'\n';
+	}
+	void preorderRec(Node* x)
+	{
+		if(x==NULL)
+			return;
+		cout<<x->key<<' ';
+		preorderRec(x->left);
+		preorderRec(x->right);
+	}
+	void preorder()
+	{
+		preorderRec(this->root);
+		cout<<'\n';
+	}
+	void postorderRec(Node* x)
+	{
+		if(x==NULL)
+			return;
+		postorderRec(x->left);
+		postorderRec(x->right);
+		cout<<x->key<<' ';
+	}
+	void postorder()
+	{
+		postorderRec(this->root);
+		cout<<'\n';
+	}
+};
+int main()
+{
+	Tree* tree = new Tree();
+	tree->insert(11);
+	tree->insert(2);
+	tree->insert(9);
+	tree->insert(13);
+	tree->insert(57);
+	tree->insert(25);
+	tree->insert(1);
+	tree->insert(17);
+	tree->insert(90);
+	tree->insert(3);
+	tree->inorder();
+	tree->preorder();
+	tree->postorder();
+	Node* x=tree->search(11);
+	tree->del(x);
+	tree->inorder();
+	tree->preorder();
+	tree->postorder();
+	return 0;
+}

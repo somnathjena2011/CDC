@@ -1,0 +1,28 @@
+1. Preprocessors are used to process our source code BEFORE COMPILATION.
+2. Source file=> prog.c ----passed to preprocessor---> prog(an expanded
+source code)
+4 main types of preprocessor directives which tell the preprocessors what to do:
+
+1. MACROS:
+-> A piece of code in a program given some name. Whenever this name is encountered by compiler, compiler replaces with the actual piece of code. e.g. #define
+-> Can have arguments, work similar to functions
+#define AREA(l,b) (l*b)
+or #define AREA(l,b) l * b <-- note the spaces
+
+2. FILE INCLUSION:
+-> This preprocessor tells the compiler to include a file in the source code program. 
+-> 2 types of files can be included in the program:
+   -> Header files/standard files: e.g. stdio.h which contains functions like printf(), scanf(). #include <file_name>
+   -> User defined files: #include "file_name"
+
+3. CONDITIONAL COMPILATION:
+-> Help to compile/skip compilation of a specific part of a program based on some conditions.
+-> e.g.
+#ifdef INDIA
+	int a=5;
+	int b=7;
+#endif
+
+4. OTHERS:
+-> #undef: undefine an existing macro, from after this statement, #ifdef macro_name will be false
+-> #pragma: not supported by gcc

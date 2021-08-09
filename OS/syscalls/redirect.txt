@@ -1,0 +1,9 @@
+total 36
+drwxrwxr-x 2 somnath somnath 4096 Jun 25 01:52 .
+drwxrwxr-x 4 somnath somnath 4096 Jun 24 23:02 ..
+-rwxrwxr-x 1 somnath somnath 8632 Jun 25 01:52 a.out
+-rw-rw-r-- 1 somnath somnath  415 Jun 25 01:51 dup.c
+-rw-rw-r-- 1 somnath somnath  200 Jun 25 01:32 exec.c
+-rw-rw-r-- 1 somnath somnath  374 Jun 24 23:08 fork_exec_wait.cpp
+---s--x--- 1 somnath somnath    0 Jun 25 01:52 redirect.txt
+-rw-rw-r-- 1 somnath somnath  623 Jun 25 00:12 shm.cpp

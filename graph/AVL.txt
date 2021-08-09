@@ -1,0 +1,301 @@
+#include<bits/stdc++.h>
+using namespace std;
+struct Node{
+	int key;
+	Node* left;
+	Node* right;
+	int height;
+	Node(int key):key(key),left(NULL),right(NULL),height(1){}
+};
+class Tree
+{
+public:
+	Node* root;
+	Tree()
+	{
+		this->root=NULL;
+	}
+	bool empty()
+	{
+		if(this->root==NULL)
+			return true;
+		else
+			return false;
+	}
+	Node* search(int key)
+	{
+		Node* curr=this->root;
+		while(curr!=NULL)
+		{
+			if(curr->key==key)
+				return curr;
+			else if(key < curr->key)
+				curr=curr->left;
+			else
+				curr=curr->right;
+		}
+		return NULL;
+	}
+	Node* maximum(Node* x=NULL)
+	{
+		Node* c=NULL;
+		if(x==NULL)
+			c=this->root;
+		else
+			c=x;
+		while(c->right!=NULL)
+			c=c->right;
+		return c;
+	}
+	Node* minimum(Node* x=NULL)
+	{
+		Node* c=NULL;
+		if(x==NULL)
+			c=this->root;
+		else
+			c=x;
+		while(c->left!=NULL)
+			c=c->left;
+		return c;
+	}
+	Node* successor(int val)
+	{
+		Node* c=search(val);
+		Node* p=NULL;
+		if(c==NULL)
+			return NULL;
+		if(c->right!=NULL)
+			return minimum(c->right);
+		else
+		{
+			p=NULL;
+			Node* x=this->root;
+			while(x!=NULL&&x!=c)
+			{
+				if(c->key < x->key)
+				{
+					p=x;
+					x=x->left;
+				}
+				else
+					x=x->right;
+			}
+			return p;
+		}
+	}
+	Node* predecessor(int val)
+	{
+		Node* c=search(val);
+		Node* p=NULL;
+		if(c==NULL)
+			return NULL;
+		if(c->left!=NULL)
+			return maximum(c->left);
+		else
+		{
+			p=NULL;
+			Node* x=this->root;
+			while(x!=NULL&&x!=c)
+			{
+				if(c->key > x->key)
+				{
+					p=x;
+					x=x->right;
+				}
+				else
+					x=x->left;
+			}
+			return p;
+		}
+	}
+	void inorderRec(Node* x)
+	{
+		if(x==NULL)
+			return;
+		inorderRec(x->left);
+		cout<<x->key<<' ';
+		inorderRec(x->right);
+	}
+	void inorder()
+	{
+		inorderRec(this->root);
+		cout<<'\n';
+	}
+	void preorderRec(Node* x)
+	{
+		if(x==NULL)
+			return;
+		cout<<x->key<<' ';
+		preorderRec(x->left);
+		preorderRec(x->right);
+	}
+	void preorder()
+	{
+		preorderRec(this->root);
+		cout<<'\n';
+	}
+	void postorderRec(Node* x)
+	{
+		if(x==NULL)
+			return;
+		postorderRec(x->left);
+		postorderRec(x->right);
+		cout<<x->key<<' ';
+	}
+	void postorder()
+	{
+		postorderRec(this->root);
+		cout<<'\n';
+	}
+	int height(Node* x)
+	{
+		if(x!=NULL)
+			return x->height;
+		else
+			return 0;
+	}
+	int getBalance(Node* node)
+	{
+		if(node==NULL)
+			return 0;
+		return height(node->left)-height(node->right);
+	}
+	Node* rightRotate(Node* y)
+	{
+		Node* x=y->left;
+		Node* z=NULL;
+		if(x)
+		{
+			z=x->right;
+			x->right=y;
+			y->left=z;
+			y->height= max(height(y->left),height(y->right))+1;
+			x->height= max(height(x->left),height(x->right))+1;
+			return x;
+		}
+		return y;
+	}
+	Node* leftRotate(Node* x)
+	{
+		Node* y=x->right;
+		Node* z=NULL;
+		if(y)
+		{
+			z=y->left;
+			y->left=x;
+			x->right=z;
+			x->height= max(height(x->left),height(x->right))+1;
+			y->height= max(height(y->left),height(y->right))+1;
+			return y;
+		}
+		return x;
+	}
+	Node* insert(Node* node,int key)
+	{
+		if(node==NULL)
+		{
+			Node* n=new Node(key);
+			return n;
+		}
+		if(key < node->key)
+			node->left = insert(node->left, key);
+		else if(key > node->key)
+			node->right = insert(node->right, key);
+		else
+			return node;
+
+		node->height = max(height(node->left),height(node->right))+1;
+		int bal = getBalance(node);
+		if(bal>1 && key < node->left->key)
+			return rightRotate(node);
+		if(bal<-1 && key > node->right->key)
+			return leftRotate(node);
+		if(bal>1 && key > node->left->key)
+		{
+			node->left = leftRotate(node->left);
+			return rightRotate(node);
+		}
+		if(bal<-1 && key < node->right->key)
+		{
+			node->right = rightRotate(node->right);
+			return leftRotate(node);
+		}
+		return node;
+	}
+	Node* del(Node* node,int key)
+	{
+		if(node==NULL)
+			return node;
+
+		if(key < node->key)
+			node->left = del(node->left, key);
+		else if(key > node->key)
+			node->right = del(node->right, key);
+		else
+		{
+			if(node->left==NULL || node->right==NULL)
+			{
+				Node* temp= node->left ? node->left : node->right;
+				if(temp==NULL)
+				{
+					temp=node;
+					node=NULL;
+				}
+				else
+					*node = *temp;
+				free(temp);
+			}
+			else
+			{
+				Node* temp = minimum(node->right);
+				node->key = temp->key;
+				node->right = del(node->right, temp->key);
+			}
+		}
+		if(node==NULL)
+			return node;
+
+		node->height = max(height(node->left),height(node->right))+1;
+		int bal=getBalance(node);
+		if(bal>1 && getBalance(node->left)>=0)
+			return rightRotate(node);
+		if(bal>1 && getBalance(node->left)<0)
+		{
+			node->left = leftRotate(node->left);
+			return rightRotate(node);
+		}
+		if(bal<-1 && getBalance(node->right)<=0)
+			return leftRotate(node);
+		if(bal<-1 && getBalance(node->right)>0)
+		{
+			node->right = rightRotate(node->right);
+			return leftRotate(node);
+		}
+		return node;
+	}
+};
+int main()
+{
+	Tree* tree = new Tree();
+	tree->root = tree->insert(tree->root, 9);
+	tree->root = tree->insert(tree->root, 5);
+	tree->root = tree->insert(tree->root, 10);
+	tree->root = tree->insert(tree->root, 0);
+	tree->root = tree->insert(tree->root, 6);
+	tree->root = tree->insert(tree->root, 11);
+	tree->root = tree->insert(tree->root, -1);
+	tree->root = tree->insert(tree->root, 1);
+	tree->root = tree->insert(tree->root, 2);
+
+	tree->preorder();
+	tree->inorder();
+	tree->postorder();
+
+	tree->root = tree->del(tree->root, 10);
+
+	tree->preorder();
+	tree->inorder();
+	tree->postorder();
+	
+	return 0;
+}
